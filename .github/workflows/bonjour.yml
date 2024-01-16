@@ -1,12 +1,16 @@
+# bonjour.yml
 name: Bonjour
 on:
   - push
 jobs:
   dire_bonjour:
     runs-on: ubuntu-22.04
+    env:
+      IMAGE_NAME: "mynode:19"
     steps:
       - uses: actions/checkout@v3 # Récupère le contenu du dépôt correspondant au commit du workflow en cours
-      - run: |
-          sudo apt-get update
-          sudo apt-get install --yes cowsay
-      - run: cat README.md | cowsay
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+      - run: docker image build --tag=test_image ./
+      - run: docker container run test_image npm run lint
